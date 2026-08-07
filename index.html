@@ -123,19 +123,22 @@
     .fortune {
       --paper-a: var(--cyan); --paper-b: var(--violet); --delay: 0s;
       position: absolute; top: 72px; left: 50%; width: 174px; aspect-ratio: 1;
-      transform: translateX(-50%) translateZ(58px) rotate(45deg);
+      transform: translateX(-50%) translateZ(58px) rotateX(56deg) rotateZ(45deg);
       transform-style: preserve-3d; filter: drop-shadow(0 26px 32px rgba(0,0,0,.36));
-      animation: fortune-float 4.2s ease-in-out infinite var(--delay);
+      animation: fortune-float 8s ease-in-out infinite var(--delay);
     }
     .fortune::before {
-      content: ""; position: absolute; inset: 8%; border: 1px solid rgba(255,255,255,.18);
-      transform: translateZ(-18px); background: rgba(8,8,16,.62);
+      content: ""; position: absolute; z-index: -2; inset: 2%;
+      border: 1px solid color-mix(in srgb,var(--paper-a) 30%,transparent);
+      background: color-mix(in srgb,var(--paper-b) 16%,#080810);
+      transform: translateZ(-13px); box-shadow: 0 14px 24px rgba(0,0,0,.46);
     }
     .fold {
       position: absolute; inset: 0; display: grid; place-items: center;
       transform-style: preserve-3d; backface-visibility: visible;
-      background: linear-gradient(135deg,color-mix(in srgb,var(--paper-a) 88%,white),color-mix(in srgb,var(--paper-b) 75%,#10101a));
-      border: 1px solid rgba(255,255,255,.25); box-shadow: inset 0 0 22px rgba(255,255,255,.09);
+      background: linear-gradient(135deg,color-mix(in srgb,var(--paper-a) 88%,white),color-mix(in srgb,var(--paper-b) 72%,#10101a));
+      border: 1px solid rgba(255,255,255,.32);
+      box-shadow: inset 0 0 22px rgba(255,255,255,.1), 0 5px 8px rgba(0,0,0,.28);
     }
     .fold::after {
       content: ""; position: absolute; inset: 18%; border: 1px solid rgba(7,7,11,.28);
@@ -149,24 +152,38 @@
     .fold-e i { transform: translateX(43px) rotate(-45deg) translateZ(3px); }
     .fold-s i { transform: translateY(43px) rotate(-45deg) translateZ(3px); }
     .fold-w i { transform: translateX(-43px) rotate(-45deg) translateZ(3px); }
-    .fold-n { clip-path: polygon(0 0,100% 0,50% 50%); transform-origin: 50% 0; animation: fold-n 3.8s cubic-bezier(.65,0,.35,1) infinite var(--delay); }
-    .fold-e { clip-path: polygon(100% 0,100% 100%,50% 50%); transform-origin: 100% 50%; animation: fold-e 3.8s cubic-bezier(.65,0,.35,1) infinite var(--delay); }
-    .fold-s { clip-path: polygon(100% 100%,0 100%,50% 50%); transform-origin: 50% 100%; animation: fold-s 3.8s cubic-bezier(.65,0,.35,1) infinite var(--delay); }
-    .fold-w { clip-path: polygon(0 100%,0 0,50% 50%); transform-origin: 0 50%; animation: fold-w 3.8s cubic-bezier(.65,0,.35,1) infinite var(--delay); }
-    .fortune-core {
-      position: absolute; z-index: -1; inset: 33%; border-radius: 50%;
-      background: var(--paper-a); box-shadow: 0 0 44px var(--paper-a);
-      transform: translateZ(-12px); animation: core-pulse 3.8s ease-in-out infinite var(--delay);
+    .fold-n { clip-path: polygon(0 0,100% 0,50% 50%); transform-origin: 50% 0; animation: fold-n 8s cubic-bezier(.65,0,.35,1) infinite var(--delay); }
+    .fold-e { clip-path: polygon(100% 0,100% 100%,50% 50%); transform-origin: 100% 50%; animation: fold-e 8s cubic-bezier(.65,0,.35,1) infinite var(--delay); }
+    .fold-s { clip-path: polygon(100% 100%,0 100%,50% 50%); transform-origin: 50% 100%; animation: fold-s 8s cubic-bezier(.65,0,.35,1) infinite var(--delay); }
+    .fold-w { clip-path: polygon(0 100%,0 0,50% 50%); transform-origin: 0 50%; animation: fold-w 8s cubic-bezier(.65,0,.35,1) infinite var(--delay); }
+    .fortune-inner {
+      position: absolute; z-index: -1; inset: 21%; overflow: hidden;
+      border: 2px solid color-mix(in srgb,var(--paper-a) 72%,white);
+      background:
+        linear-gradient(45deg,transparent 48.8%,color-mix(in srgb,var(--paper-a) 65%,white) 49.5% 50.5%,transparent 51.2%),
+        linear-gradient(-45deg,transparent 48.8%,color-mix(in srgb,var(--paper-b) 72%,white) 49.5% 50.5%,transparent 51.2%),
+        linear-gradient(135deg,color-mix(in srgb,var(--paper-a) 32%,#11111b),color-mix(in srgb,var(--paper-b) 42%,#090912));
+      transform: translateZ(-5px); box-shadow: inset 0 0 18px rgba(0,0,0,.42);
+      animation: inner-reveal 8s ease-in-out infinite var(--delay);
+    }
+    .fortune-inner::before {
+      content: ""; position: absolute; inset: 18%;
+      border: 1px solid rgba(255,255,255,.58); transform: rotate(45deg);
+    }
+    .fortune-inner::after {
+      content: ""; position: absolute; inset: 38%;
+      border: 1px solid color-mix(in srgb,var(--paper-a) 75%,white);
+      background: color-mix(in srgb,var(--paper-b) 32%,#0a0a12);
     }
     .card:nth-child(1) .fortune { --paper-a: var(--cyan); --paper-b: var(--violet); }
     .card:nth-child(2) .fortune { --paper-a: var(--pink); --paper-b: #ffb65e; --delay: -1.25s; }
     .card:nth-child(3) .fortune { --paper-a: var(--lime); --paper-b: #45ddd0; --delay: -2.5s; }
-    @keyframes fortune-float { 50% { transform: translateX(-50%) translateY(-7px) translateZ(64px) rotate(48deg); } }
-    @keyframes fold-n { 0%,20%,82%,100% { transform: rotateX(0); } 42%,62% { transform: rotateX(-67deg) translateZ(8px); } }
-    @keyframes fold-e { 0%,20%,82%,100% { transform: rotateY(0); } 42%,62% { transform: rotateY(67deg) translateZ(8px); } }
-    @keyframes fold-s { 0%,20%,82%,100% { transform: rotateX(0); } 42%,62% { transform: rotateX(67deg) translateZ(8px); } }
-    @keyframes fold-w { 0%,20%,82%,100% { transform: rotateY(0); } 42%,62% { transform: rotateY(-67deg) translateZ(8px); } }
-    @keyframes core-pulse { 0%,20%,82%,100% { opacity: .1; transform: translateZ(-12px) scale(.4); } 42%,62% { opacity: .95; transform: translateZ(-12px) scale(1); } }
+    @keyframes fortune-float { 50% { transform: translateX(-50%) translateY(-5px) translateZ(64px) rotateX(56deg) rotateZ(47deg); } }
+    @keyframes fold-n { 0%,7%,39%,100% { transform: rotateX(0) translateZ(1px); } 16%,29% { transform: rotateX(-74deg) translateY(-7px) translateZ(12px); } }
+    @keyframes fold-s { 0%,7%,39%,100% { transform: rotateX(0) translateZ(1px); } 16%,29% { transform: rotateX(74deg) translateY(7px) translateZ(12px); } }
+    @keyframes fold-e { 0%,47%,87%,100% { transform: rotateY(0) translateZ(1px); } 58%,76% { transform: rotateY(74deg) translateX(7px) translateZ(12px); } }
+    @keyframes fold-w { 0%,47%,87%,100% { transform: rotateY(0) translateZ(1px); } 58%,76% { transform: rotateY(-74deg) translateX(-7px) translateZ(12px); } }
+    @keyframes inner-reveal { 0%,7%,39%,47%,87%,100% { opacity: .18; } 16%,29%,58%,76% { opacity: 1; } }
     .card h3 { position: relative; margin: 245px 0 9px; font-size: 29px; letter-spacing: -.04em; transform: translateZ(34px); }
     .card p { position: relative; margin: 0; color: var(--muted); line-height: 1.6; transform: translateZ(22px); }
 
@@ -253,9 +270,9 @@
         <div><h2 class="reveal">让想法拥有<br>可触摸的形状。</h2><p class="section-copy reveal">移动鼠标到卡片上，它们会随视线改变角度与光源。这里将逐渐成为项目、工具和灵感的入口。</p></div>
       </div>
       <div class="cards">
-        <article class="card reveal"><div class="card-no">01 / BUILDING</div><div class="fortune" aria-hidden="true"><span class="fold fold-n"><i>北</i></span><span class="fold fold-e"><i>东</i></span><span class="fold fold-s"><i>南</i></span><span class="fold fold-w"><i>西</i></span><span class="fortune-core"></span></div><h3>数字空间</h3><p>建立一个长期、稳定、真正属于自己的内容入口。</p></article>
-        <article class="card reveal"><div class="card-no">02 / MAKING</div><div class="fortune" aria-hidden="true"><span class="fold fold-n"><i>北</i></span><span class="fold fold-e"><i>东</i></span><span class="fold fold-s"><i>南</i></span><span class="fold fold-w"><i>西</i></span><span class="fortune-core"></span></div><h3>实用工具</h3><p>把工作与生活里的真实问题，变成简单好用的产品。</p></article>
-        <article class="card reveal"><div class="card-no">03 / LEARNING</div><div class="fortune" aria-hidden="true"><span class="fold fold-n"><i>北</i></span><span class="fold fold-e"><i>东</i></span><span class="fold fold-s"><i>南</i></span><span class="fold fold-w"><i>西</i></span><span class="fortune-core"></span></div><h3>持续探索</h3><p>保留好奇心，在新的技术、表达和想法之间建立连接。</p></article>
+        <article class="card reveal"><div class="card-no">01 / BUILDING</div><div class="fortune" aria-hidden="true"><span class="fortune-inner"></span><span class="fold fold-n"><i>北</i></span><span class="fold fold-e"><i>东</i></span><span class="fold fold-s"><i>南</i></span><span class="fold fold-w"><i>西</i></span></div><h3>数字空间</h3><p>建立一个长期、稳定、真正属于自己的内容入口。</p></article>
+        <article class="card reveal"><div class="card-no">02 / MAKING</div><div class="fortune" aria-hidden="true"><span class="fortune-inner"></span><span class="fold fold-n"><i>北</i></span><span class="fold fold-e"><i>东</i></span><span class="fold fold-s"><i>南</i></span><span class="fold fold-w"><i>西</i></span></div><h3>实用工具</h3><p>把工作与生活里的真实问题，变成简单好用的产品。</p></article>
+        <article class="card reveal"><div class="card-no">03 / LEARNING</div><div class="fortune" aria-hidden="true"><span class="fortune-inner"></span><span class="fold fold-n"><i>北</i></span><span class="fold fold-e"><i>东</i></span><span class="fold fold-s"><i>南</i></span><span class="fold fold-w"><i>西</i></span></div><h3>持续探索</h3><p>保留好奇心，在新的技术、表达和想法之间建立连接。</p></article>
       </div>
     </section>
 
