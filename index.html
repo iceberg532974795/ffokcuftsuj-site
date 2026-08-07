@@ -151,10 +151,15 @@
     .saturn {
       position: absolute; z-index: 1; top: 66px; left: 50%; width: 262px; height: 186px;
       transform: translateX(-50%) translateZ(62px) rotate(-4deg);
-      filter: sepia(.55) saturate(1.2) drop-shadow(0 25px 28px rgba(0,0,0,.58)) drop-shadow(0 0 25px rgba(255,196,112,.2));
       animation: saturn-float 5.8s ease-in-out infinite -1.8s;
     }
-    .saturn img { width: 100%; height: 100%; object-fit: contain; display: block; mix-blend-mode: screen; animation: saturn-breathe 8s ease-in-out infinite; }
+    .saturn img {
+      width: 100%; height: 100%; object-fit: contain; display: block; mix-blend-mode: screen;
+      filter: sepia(.55) saturate(1.2) drop-shadow(0 25px 28px rgba(0,0,0,.58)) drop-shadow(0 0 25px rgba(255,196,112,.2));
+      -webkit-mask-image: radial-gradient(ellipse 52% 45% at 50% 52%,#000 62%,rgba(0,0,0,.82) 76%,transparent 100%);
+      mask-image: radial-gradient(ellipse 52% 45% at 50% 52%,#000 62%,rgba(0,0,0,.82) 76%,transparent 100%);
+      animation: saturn-breathe 8s ease-in-out infinite;
+    }
     .saturn::before {
       content: ""; position: absolute; z-index: -1; inset: 28px 4px 21px;
       border: 1px solid rgba(255,210,145,.2); border-radius: 50%;
