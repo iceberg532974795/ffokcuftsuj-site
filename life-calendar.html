@@ -60,8 +60,10 @@
     .icon-btn,.ghost{background:rgba(255,255,255,.05);border:1px solid var(--line)}
     .icon-btn{width:40px;height:40px;border-radius:50%;font-size:18px}.icon-btn:hover,.ghost:hover{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.2)}
     .week,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+    .days{overflow:hidden;border:1px solid rgba(255,255,255,.15);border-radius:18px;background:rgba(255,255,255,.012)}
     .week div{color:#777684;font:650 10px/1 ui-monospace,monospace;letter-spacing:.14em;text-align:center;padding:8px 0 15px}
-    .day{position:relative;min-height:100px;padding:11px;border:1px solid rgba(255,255,255,.055);margin:-.5px;background:transparent;cursor:pointer;text-align:left;overflow:hidden;transition:.2s}
+    .day{position:relative;min-height:100px;padding:11px;border:1px solid rgba(255,255,255,.14);margin:-.5px;background:transparent;cursor:pointer;text-align:left;overflow:hidden;transition:.2s}
+    .day:nth-child(7n+6),.day:nth-child(7n){background:rgba(146,116,255,.025)}
     .day:hover{z-index:2;background:rgba(255,255,255,.055);border-color:rgba(98,245,223,.28)}
     .day.muted{opacity:.24}.day.today .num{background:var(--cyan);color:#07100e}.day.selected{background:rgba(98,245,223,.07);border-color:rgba(98,245,223,.4);z-index:1}
     .num{display:grid;place-items:center;width:27px;height:27px;border-radius:50%;font:650 12px/1 ui-monospace,monospace}
@@ -166,10 +168,11 @@
       const parseDate=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
       const startToday=()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())};
       const addDays=n=>{const d=startToday();d.setDate(d.getDate()+n);return dateKey(d)};
+      const makeId=()=>globalThis.crypto&&typeof globalThis.crypto.randomUUID==='function'?globalThis.crypto.randomUUID():`evt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`;
       const defaults=()=>[
-        {id:crypto.randomUUID(),name:'和喜欢的人看一次日落',date:addDays(9),note:'带上相机，也记得放下相机。',color:'#ffaf67'},
-        {id:crypto.randomUUID(),name:'期待已久的小旅行',date:addDays(24),note:'把工作留在出发前。',color:'#62f5df'},
-        {id:crypto.randomUUID(),name:'给未来自己的晚餐',date:addDays(52),note:'庆祝走过这一段普通又珍贵的时间。',color:'#9274ff'}
+        {id:makeId(),name:'和喜欢的人看一次日落',date:addDays(9),note:'带上相机，也记得放下相机。',color:'#ffaf67'},
+        {id:makeId(),name:'期待已久的小旅行',date:addDays(24),note:'把工作留在出发前。',color:'#62f5df'},
+        {id:makeId(),name:'给未来自己的晚餐',date:addDays(52),note:'庆祝走过这一段普通又珍贵的时间。',color:'#9274ff'}
       ];
       let events;
       try{const saved=JSON.parse(localStorage.getItem(KEY));events=Array.isArray(saved)?saved:defaults()}catch{events=defaults()}
@@ -222,7 +225,7 @@
       $('#today').onclick=()=>{const d=new Date();view=new Date(d.getFullYear(),d.getMonth(),1);renderCalendar()};
       $('#addBtn').onclick=()=>openForDate();$('#closeBtn').onclick=close;$('#cancelBtn').onclick=close;
       $('#colors').onclick=e=>{const b=e.target.closest('.color');if(b)setColor(b.dataset.color)};
-      $('#eventForm').onsubmit=e=>{e.preventDefault();const id=$('#eventId').value;const item={id:id||crypto.randomUUID(),name:$('#eventName').value.trim(),date:$('#eventDate').value,note:$('#eventNote').value.trim(),color:selectedColor};if(!item.name||!item.date)return;const i=events.findIndex(x=>x.id===id);if(i>=0)events[i]=item;else events.push(item);save();view=parseDate(item.date);view=new Date(view.getFullYear(),view.getMonth(),1);close();render();toast(i>=0?'期待已更新':'已保存到人生日历')};
+      $('#eventForm').onsubmit=e=>{e.preventDefault();const id=$('#eventId').value;const item={id:id||makeId(),name:$('#eventName').value.trim(),date:$('#eventDate').value,note:$('#eventNote').value.trim(),color:selectedColor};if(!item.name||!item.date)return;const i=events.findIndex(x=>x.id===id);if(i>=0)events[i]=item;else events.push(item);save();view=parseDate(item.date);view=new Date(view.getFullYear(),view.getMonth(),1);close();render();toast(i>=0?'期待已更新':'已保存到人生日历')};
       $('#deleteBtn').onclick=()=>{const id=$('#eventId').value;if(!id)return;events=events.filter(e=>e.id!==id);save();close();render();toast('这份期待已移除')};
       $('#eventDialog').addEventListener('click',e=>{if(e.target===$('#eventDialog'))close()});
       render();
