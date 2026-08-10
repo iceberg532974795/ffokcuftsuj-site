@@ -155,6 +155,14 @@
     @keyframes planet-float { 50% { transform: translateX(-50%) translateY(-7px) translateZ(68px) rotate(-4deg) scale(1.025); } }
     .card h3 { position: relative; margin: 245px 0 9px; font-size: 29px; letter-spacing: -.04em; transform: translateZ(34px); }
     .card p { position: relative; margin: 0; color: var(--muted); line-height: 1.6; transform: translateZ(22px); }
+    .card-link { color: inherit; text-decoration: none; cursor: pointer; }
+    .card-enter {
+      position: absolute; right: 23px; bottom: 21px; z-index: 2;
+      color: var(--cyan); font: 700 10px/1 ui-monospace,monospace; letter-spacing: .13em;
+      opacity: 0; transform: translateX(-8px); transition: opacity .25s, transform .25s;
+    }
+    .card-link:hover .card-enter, .card-link:focus-visible .card-enter { opacity: 1; transform: translateX(0); }
+    .card-link:focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; }
 
     .story { position: relative; min-height: 320vh; }
     .story-sticky { position: sticky; top: 0; min-height: 100svh; display: grid; place-items: center; overflow: hidden; }
@@ -239,7 +247,7 @@
         <div><h2 class="reveal">让想法拥有<br>可触摸的形状。</h2><p class="section-copy reveal">移动鼠标到卡片上，它们会随视线改变角度与光源。这里将逐渐成为项目、工具和灵感的入口。</p></div>
       </div>
       <div class="cards">
-        <article class="card reveal"><div class="card-no">01 / BUILDING</div><div class="planet" aria-hidden="true"></div><h3>数字空间</h3><p>建立一个长期、稳定、真正属于自己的内容入口。</p></article>
+        <a class="card card-link reveal" href="life-calendar.html" aria-label="进入人生日历"><div class="card-no">01 / LIFE</div><div class="planet" aria-hidden="true"></div><h3>人生日历</h3><p>收藏那些值得期待的日子，为未来留下一些坐标。</p><span class="card-enter">进入日历 →</span></a>
         <article class="card reveal"><div class="card-no">02 / MAKING</div><div class="planet" aria-hidden="true"></div><h3>实用工具</h3><p>把工作与生活里的真实问题，变成简单好用的产品。</p></article>
         <article class="card reveal"><div class="card-no">03 / LEARNING</div><div class="planet moon" aria-hidden="true"></div><h3>持续探索</h3><p>保留好奇心，在新的技术、表达和想法之间建立连接。</p></article>
       </div>
