@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>人生日历 · LIFE CALENDAR</title>
+  <style>
+    :root{
+      color-scheme:dark;
+      --bg:#07070b;--panel:#101017;--panel2:#15151e;--line:rgba(255,255,255,.10);
+      --ink:#f5f4f0;--muted:#9998a8;--cyan:#62f5df;--purple:#9274ff;--orange:#ffaf67;
+      --shadow:0 28px 80px rgba(0,0,0,.42)
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;min-height:100vh;color:var(--ink);
+      font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%,rgba(98,245,223,.10),transparent 28%),
+        radial-gradient(circle at 88% 18%,rgba(146,116,255,.12),transparent 28%),
+        var(--bg);overflow-x:hidden
+    }
+    body::before{
+      content:"";position:fixed;inset:0;pointer-events:none;opacity:.38;
+      background-image:radial-gradient(circle,rgba(255,255,255,.7) 0 1px,transparent 1.2px);
+      background-size:77px 77px;mask-image:linear-gradient(to bottom,#000,transparent 75%)
+    }
+    button,input,textarea{font:inherit}
+    button{color:inherit}
+    a{color:inherit}
+    .shell{width:min(1280px,calc(100% - 40px));margin:auto;position:relative}
+    header{height:82px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+    .back{display:flex;align-items:center;gap:10px;color:var(--muted);text-decoration:none;font-size:13px;transition:.2s}
+    .back:hover{color:var(--ink)}
+    .back i{width:30px;height:30px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font-style:normal}
+    .brand{font-weight:720;letter-spacing:-.03em}.brand small{color:var(--cyan);font:600 10px/1 ui-monospace,monospace;letter-spacing:.2em;margin-left:9px}
+    .primary,.ghost,.icon-btn{border:0;cursor:pointer;transition:.22s}
+    .primary{background:var(--cyan);color:#07100e;padding:12px 18px;border-radius:999px;font-weight:750;box-shadow:0 0 30px rgba(98,245,223,.16)}
+    .primary:hover{transform:translateY(-2px);box-shadow:0 0 38px rgba(98,245,223,.30)}
+    .hero{padding:72px 0 48px;display:grid;grid-template-columns:1.15fr .85fr;gap:52px;align-items:end}
+    .eyebrow{color:var(--cyan);font:700 11px/1 ui-monospace,monospace;letter-spacing:.2em;text-transform:uppercase}
+    h1{font-size:clamp(48px,7vw,96px);line-height:.92;letter-spacing:-.075em;margin:17px 0 24px;max-width:790px}
+    h1 em{font-style:normal;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.45)}
+    .intro{margin:0;color:var(--muted);font-size:16px;line-height:1.8;max-width:600px}
+    .next-card{position:relative;border:1px solid var(--line);border-radius:28px;padding:27px;min-height:245px;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));box-shadow:var(--shadow)}
+    .next-card::before{content:"";position:absolute;width:230px;height:230px;border-radius:50%;right:-70px;top:-90px;background:radial-gradient(circle,rgba(98,245,223,.35),transparent 65%);filter:blur(8px);animation:breathe 5s ease-in-out infinite}
+    @keyframes breathe{50%{transform:scale(1.18);opacity:.65}}
+    .next-label{color:var(--muted);font-size:12px;letter-spacing:.12em}
+    .next-title{font-size:30px;font-weight:700;letter-spacing:-.04em;margin:46px 0 8px;position:relative}
+    .next-date{color:var(--muted);font-size:13px}
+    .countdown{display:flex;align-items:baseline;gap:9px;margin-top:19px;color:var(--cyan)}
+    .countdown strong{font-size:52px;line-height:1;letter-spacing:-.06em}.countdown span{font-size:13px}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:20px;padding-bottom:80px}
+    .calendar,.side{border:1px solid var(--line);background:rgba(14,14,21,.78);backdrop-filter:blur(18px);border-radius:27px;box-shadow:var(--shadow)}
+    .calendar{padding:28px}
+    .cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:27px}
+    .month-title{font-size:25px;font-weight:710;letter-spacing:-.04em}.month-title span{color:var(--muted);font-weight:400;margin-left:8px}
+    .cal-actions{display:flex;gap:8px}
+    .icon-btn,.ghost{background:rgba(255,255,255,.05);border:1px solid var(--line)}
+    .icon-btn{width:40px;height:40px;border-radius:50%;font-size:18px}.icon-btn:hover,.ghost:hover{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.2)}
+    .week,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+    .week div{color:#777684;font:650 10px/1 ui-monospace,monospace;letter-spacing:.14em;text-align:center;padding:8px 0 15px}
+    .day{position:relative;min-height:100px;padding:11px;border:1px solid rgba(255,255,255,.055);margin:-.5px;background:transparent;cursor:pointer;text-align:left;overflow:hidden;transition:.2s}
+    .day:hover{z-index:2;background:rgba(255,255,255,.055);border-color:rgba(98,245,223,.28)}
+    .day.muted{opacity:.24}.day.today .num{background:var(--cyan);color:#07100e}.day.selected{background:rgba(98,245,223,.07);border-color:rgba(98,245,223,.4);z-index:1}
+    .num{display:grid;place-items:center;width:27px;height:27px;border-radius:50%;font:650 12px/1 ui-monospace,monospace}
+    .event-dot{width:7px;height:7px;border-radius:50%;position:absolute;right:11px;top:12px;background:var(--event-color,var(--cyan));box-shadow:0 0 13px var(--event-color,var(--cyan))}
+    .event-name{display:block;margin-top:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#d8d7dd;font-size:11px;line-height:1.45}
+    .side{padding:24px;display:flex;flex-direction:column;min-height:620px}
+    .side-head{display:flex;justify-content:space-between;align-items:center}.side-head h2{font-size:17px;margin:0}.side-head span{color:var(--muted);font-size:11px}
+    .upcoming{display:flex;flex-direction:column;gap:10px;margin-top:20px;overflow:auto}
+    .event-card{position:relative;padding:15px 14px 15px 20px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.035);cursor:pointer;transition:.2s}
+    .event-card::before{content:"";position:absolute;width:3px;left:0;top:16px;bottom:16px;border-radius:3px;background:var(--event-color);box-shadow:0 0 12px var(--event-color)}
+    .event-card:hover{transform:translateX(3px);background:rgba(255,255,255,.065)}
+    .event-top{display:flex;justify-content:space-between;gap:14px}.event-card h3{font-size:14px;margin:0;font-weight:650}.days-left{color:var(--event-color);font:700 11px/1.2 ui-monospace,monospace;white-space:nowrap}
+    .event-meta{color:var(--muted);font-size:11px;margin-top:7px}.event-note{color:#c2c1c9;font-size:12px;line-height:1.5;margin-top:9px}
+    .empty{padding:60px 15px;text-align:center;color:var(--muted);font-size:13px;line-height:1.7}
+    .quote{margin-top:auto;padding-top:24px;border-top:1px solid var(--line);color:#858491;font-size:12px;line-height:1.75}.quote b{color:var(--ink);font-weight:500}
+    dialog{width:min(480px,calc(100% - 28px));border:1px solid rgba(255,255,255,.16);border-radius:25px;padding:0;color:var(--ink);background:#111119;box-shadow:0 34px 100px rgba(0,0,0,.72)}
+    dialog::backdrop{background:rgba(2,2,5,.75);backdrop-filter:blur(8px)}
+    .modal{padding:26px}.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}.modal-head h2{margin:0;font-size:20px;letter-spacing:-.03em}.close{background:none;border:0;color:var(--muted);font-size:24px;cursor:pointer}
+    label{display:block;color:var(--muted);font-size:11px;margin:15px 0 7px;letter-spacing:.04em}
+    input,textarea{width:100%;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.045);color:var(--ink);padding:12px 13px;outline:0}
+    input:focus,textarea:focus{border-color:rgba(98,245,223,.5);box-shadow:0 0 0 3px rgba(98,245,223,.08)}
+    textarea{resize:vertical;min-height:78px}
+    .colors{display:flex;gap:10px}.color{width:28px;height:28px;border:2px solid transparent;border-radius:50%;padding:0;background:var(--c);cursor:pointer}.color.active{outline:2px solid var(--c);outline-offset:3px;border-color:#111119}
+    .modal-actions{display:flex;justify-content:space-between;gap:10px;margin-top:25px}.right-actions{display:flex;gap:8px;margin-left:auto}.ghost{padding:11px 15px;border-radius:999px;cursor:pointer}.delete{color:#ff7f8d;display:none}
+    .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);padding:11px 16px;border-radius:999px;background:#e9fff9;color:#07100e;font-size:12px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:10}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:48px}.layout{grid-template-columns:1fr}.side{min-height:420px}.next-card{min-height:210px}.next-title{margin-top:30px}}
+    @media(max-width:620px){.shell{width:min(100% - 22px,1280px)}header{height:70px}.brand small{display:none}.primary{padding:10px 13px}.hero{gap:25px;padding-bottom:30px}h1{font-size:52px}.calendar{padding:13px;border-radius:20px}.day{min-height:69px;padding:6px}.event-name{display:none}.week div{font-size:8px}.num{width:25px;height:25px}.event-dot{right:8px;top:9px}.cal-head{padding:7px;margin-bottom:13px}.month-title{font-size:20px}.side{border-radius:20px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <a class="back" href="./"><i>←</i><span>返回主页</span></a>
+      <div class="brand">人生日历 <small>LIFE CALENDAR</small></div>
+      <button class="primary" id="addBtn">＋ 添加期待</button>
+    </header>
+
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Make life worth waiting for</div>
+        <h1>把未来，变成<br><em>值得期待的日子。</em></h1>
+        <p class="intro">旅行、相聚、纪念日，或者只是一场想看的日落。把它们放进日历，让普通的日子也拥有方向。</p>
+      </div>
+      <article class="next-card" id="nextCard">
+        <div class="next-label">NEXT MOMENT · 下一个期待</div>
+        <div class="next-title" id="nextTitle">正在寻找未来…</div>
+        <div class="next-date" id="nextDate">—</div>
+        <div class="countdown"><strong id="nextDays">—</strong><span>天后见</span></div>
+      </article>
+    </section>
+
+    <main class="layout">
+      <section class="calendar" aria-label="月历">
+        <div class="cal-head">
+          <div class="month-title"><b id="monthZh"></b><span id="monthEn"></span></div>
+          <div class="cal-actions"><button class="icon-btn" id="prev" aria-label="上个月">‹</button><button class="icon-btn" id="today" aria-label="回到今天">·</button><button class="icon-btn" id="next" aria-label="下个月">›</button></div>
+        </div>
+        <div class="week"><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div><div>SUN</div></div>
+        <div class="days" id="days"></div>
+      </section>
+
+      <aside class="side">
+        <div class="side-head"><h2>即将抵达</h2><span id="eventCount">0 个期待</span></div>
+        <div class="upcoming" id="upcoming"></div>
+        <div class="quote"><b>“期待本身，也是幸福的一部分。”</b><br>你写下的不只是日期，也是未来生活的坐标。</div>
+      </aside>
+    </main>
+  </div>
+
+  <dialog id="eventDialog">
+    <form class="modal" id="eventForm">
+      <div class="modal-head"><h2 id="modalTitle">添加一个期待</h2><button class="close" type="button" id="closeBtn" aria-label="关闭">×</button></div>
+      <input type="hidden" id="eventId">
+      <label for="eventName">这一天值得期待什么？</label>
+      <input id="eventName" maxlength="30" required placeholder="例如：去海边看日出">
+      <label for="eventDate">日期</label>
+      <input id="eventDate" type="date" required>
+      <label for="eventNote">写给未来的自己（选填）</label>
+      <textarea id="eventNote" maxlength="100" placeholder="想和谁一起、想做什么……"></textarea>
+      <label>选择一种光</label>
+      <div class="colors" id="colors">
+        <button class="color active" type="button" style="--c:#62f5df" data-color="#62f5df" aria-label="青色"></button>
+        <button class="color" type="button" style="--c:#9274ff" data-color="#9274ff" aria-label="紫色"></button>
+        <button class="color" type="button" style="--c:#ffaf67" data-color="#ffaf67" aria-label="橙色"></button>
+        <button class="color" type="button" style="--c:#ff7fa7" data-color="#ff7fa7" aria-label="粉色"></button>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="ghost delete" id="deleteBtn">删除</button>
+        <div class="right-actions"><button type="button" class="ghost" id="cancelBtn">取消</button><button type="submit" class="primary">保存期待</button></div>
+      </div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast">已保存到人生日历</div>
+
+  <script>
+    (()=>{
+      const KEY='life-calendar-events-v1';
+      const $=s=>document.querySelector(s);
+      const pad=n=>String(n).padStart(2,'0');
+      const dateKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+      const parseDate=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+      const startToday=()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())};
+      const addDays=n=>{const d=startToday();d.setDate(d.getDate()+n);return dateKey(d)};
+      const defaults=()=>[
+        {id:crypto.randomUUID(),name:'和喜欢的人看一次日落',date:addDays(9),note:'带上相机，也记得放下相机。',color:'#ffaf67'},
+        {id:crypto.randomUUID(),name:'期待已久的小旅行',date:addDays(24),note:'把工作留在出发前。',color:'#62f5df'},
+        {id:crypto.randomUUID(),name:'给未来自己的晚餐',date:addDays(52),note:'庆祝走过这一段普通又珍贵的时间。',color:'#9274ff'}
+      ];
+      let events;
+      try{const saved=JSON.parse(localStorage.getItem(KEY));events=Array.isArray(saved)?saved:defaults()}catch{events=defaults()}
+      let view=new Date();view=new Date(view.getFullYear(),view.getMonth(),1);
+      let selectedColor='#62f5df';
+      const monthsEn=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+      const monthZh=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+
+      function save(){localStorage.setItem(KEY,JSON.stringify(events))}
+      function dayDiff(s){return Math.ceil((parseDate(s)-startToday())/86400000)}
+      function formatDate(s){const d=parseDate(s);return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 · ${['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][d.getDay()]}`}
+      function futureEvents(){return [...events].filter(e=>dayDiff(e.date)>=0).sort((a,b)=>a.date.localeCompare(b.date))}
+      function render(){renderCalendar();renderUpcoming();renderNext()}
+      function renderCalendar(){
+        $('#monthZh').textContent=`${view.getFullYear()} · ${monthZh[view.getMonth()]}`;$('#monthEn').textContent=monthsEn[view.getMonth()];
+        const first=new Date(view.getFullYear(),view.getMonth(),1),offset=(first.getDay()+6)%7;
+        const start=new Date(view);start.setDate(1-offset);const today=dateKey(startToday());let html='';
+        for(let i=0;i<42;i++){
+          const d=new Date(start);d.setDate(start.getDate()+i);const key=dateKey(d),items=events.filter(e=>e.date===key),other=d.getMonth()!==view.getMonth();
+          html+=`<button class="day ${other?'muted':''} ${key===today?'today':''}" data-date="${key}" aria-label="${formatDate(key)}">
+            <span class="num">${d.getDate()}</span>${items[0]?`<i class="event-dot" style="--event-color:${items[0].color}"></i>`:''}
+            ${items.slice(0,2).map(e=>`<span class="event-name">${escapeHtml(e.name)}</span>`).join('')}</button>`
+        }
+        $('#days').innerHTML=html;
+        document.querySelectorAll('.day').forEach(el=>el.onclick=()=>openForDate(el.dataset.date));
+      }
+      function renderUpcoming(){
+        const list=futureEvents();$('#eventCount').textContent=`${events.length} 个期待`;
+        $('#upcoming').innerHTML=list.length?list.map(e=>{const n=dayDiff(e.date);return `<article class="event-card" data-id="${e.id}" style="--event-color:${e.color}"><div class="event-top"><h3>${escapeHtml(e.name)}</h3><span class="days-left">${n===0?'就是今天':`还有 ${n} 天`}</span></div><div class="event-meta">${formatDate(e.date)}</div>${e.note?`<div class="event-note">${escapeHtml(e.note)}</div>`:''}</article>`}).join(''):'<div class="empty">未来还是空白的。<br>添加一个值得等待的日子吧。</div>';
+        document.querySelectorAll('.event-card').forEach(el=>el.onclick=()=>openEdit(el.dataset.id));
+      }
+      function renderNext(){
+        const e=futureEvents()[0];
+        if(!e){$('#nextTitle').textContent='未来等待你来命名';$('#nextDate').textContent='添加一个值得期待的日子';$('#nextDays').textContent='∞';return}
+        $('#nextTitle').textContent=e.name;$('#nextDate').textContent=formatDate(e.date);$('#nextDays').textContent=dayDiff(e.date);
+      }
+      function escapeHtml(s=''){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+      function setColor(color){selectedColor=color;document.querySelectorAll('.color').forEach(b=>b.classList.toggle('active',b.dataset.color===color))}
+      function openForDate(date=dateKey(startToday())){
+        const existing=events.find(e=>e.date===date);if(existing){openEdit(existing.id);return}
+        $('#eventForm').reset();$('#eventId').value='';$('#eventDate').value=date;$('#modalTitle').textContent='添加一个期待';$('#deleteBtn').style.display='none';setColor('#62f5df');$('#eventDialog').showModal();setTimeout(()=>$('#eventName').focus(),80)
+      }
+      function openEdit(id){
+        const e=events.find(x=>x.id===id);if(!e)return;$('#eventId').value=e.id;$('#eventName').value=e.name;$('#eventDate').value=e.date;$('#eventNote').value=e.note||'';$('#modalTitle').textContent='编辑这份期待';$('#deleteBtn').style.display='block';setColor(e.color);$('#eventDialog').showModal()
+      }
+      function close(){ $('#eventDialog').close() }
+      function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800)}
+      $('#prev').onclick=()=>{view.setMonth(view.getMonth()-1);renderCalendar()};
+      $('#next').onclick=()=>{view.setMonth(view.getMonth()+1);renderCalendar()};
+      $('#today').onclick=()=>{const d=new Date();view=new Date(d.getFullYear(),d.getMonth(),1);renderCalendar()};
+      $('#addBtn').onclick=()=>openForDate();$('#closeBtn').onclick=close;$('#cancelBtn').onclick=close;
+      $('#colors').onclick=e=>{const b=e.target.closest('.color');if(b)setColor(b.dataset.color)};
+      $('#eventForm').onsubmit=e=>{e.preventDefault();const id=$('#eventId').value;const item={id:id||crypto.randomUUID(),name:$('#eventName').value.trim(),date:$('#eventDate').value,note:$('#eventNote').value.trim(),color:selectedColor};if(!item.name||!item.date)return;const i=events.findIndex(x=>x.id===id);if(i>=0)events[i]=item;else events.push(item);save();view=parseDate(item.date);view=new Date(view.getFullYear(),view.getMonth(),1);close();render();toast(i>=0?'期待已更新':'已保存到人生日历')};
+      $('#deleteBtn').onclick=()=>{const id=$('#eventId').value;if(!id)return;events=events.filter(e=>e.id!==id);save();close();render();toast('这份期待已移除')};
+      $('#eventDialog').addEventListener('click',e=>{if(e.target===$('#eventDialog'))close()});
+      render();
+    })();
+  </script>
+</body>
+</html>
