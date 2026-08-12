@@ -220,11 +220,11 @@
       </div>
       <div class="cards">
         <a class="card card-link reveal" href="life-calendar.html" aria-label="进入人生日历"><div class="card-no">01 / PORTAL · CYAN</div><canvas class="visual" data-effect="portalCyan" aria-hidden="true"></canvas><h3>人生日历</h3><p>收藏那些值得期待的日子，为未来留下一些坐标。</p><span class="card-enter">进入日历 →</span></a>
-        <article class="card reveal"><div class="card-no">02 / PORTAL · MAGENTA</div><canvas class="visual" data-effect="portalPink" aria-hidden="true"></canvas><h3>实用工具</h3><p>把工作与生活里的真实问题，变成简单好用的产品。</p></article>
-        <article class="card reveal"><div class="card-no">03 / PORTAL · AMBER</div><canvas class="visual" data-effect="portalAmber" aria-hidden="true"></canvas><h3>持续探索</h3><p>保留好奇心，在新的技术、表达和想法之间建立连接。</p></article>
-        <article class="card reveal"><div class="card-no">04 / QUANTUM · HEARTBEAT</div><canvas class="visual" data-effect="heart0" aria-hidden="true"></canvas><h3>磁流体</h3><p>让金属液滴追随磁场起伏，凝聚成不断生长的黑色尖峰。</p></article>
-        <article class="card reveal"><div class="card-no">05 / QUANTUM · HEARTBEAT</div><canvas class="visual" data-effect="heart1" aria-hidden="true"></canvas><h3>量子丝线</h3><p>让发光曲线彼此纠缠，形成持续流动的能量轨迹。</p></article>
-        <article class="card reveal"><div class="card-no">06 / QUANTUM · HEARTBEAT</div><canvas class="visual" data-effect="heart2" aria-hidden="true"></canvas><h3>故障立方体</h3><p>在秩序与故障之间，制造带有 RGB 错位的数字空间。</p></article>
+        <article class="card reveal"><div class="card-no">02 / PORTAL · MAGENTA</div><canvas class="visual" data-effect="portalPink" aria-hidden="true"></canvas><h3>把复杂变简单</h3><p>偶尔做点有用的东西，也顺手把生活里的小麻烦收拾掉。</p></article>
+        <article class="card reveal"><div class="card-no">03 / PORTAL · AMBER</div><canvas class="visual" data-effect="portalAmber" aria-hidden="true"></canvas><h3>去没去过的地方</h3><p>答案不一定重要。绕远一点，也许会撞见一个更好的问题。</p></article>
+        <article class="card reveal"><div class="card-no">04 / GRAVITY · CYAN</div><canvas class="visual" data-effect="lensCyan" aria-hidden="true"></canvas><h3>引力潮汐</h3><p>有些事不用急着解释，先让它在心里缓慢形成轨道。</p></article>
+        <article class="card reveal"><div class="card-no">05 / GRAVITY · VIOLET</div><canvas class="visual" data-effect="lensViolet" aria-hidden="true"></canvas><h3>紫域回声</h3><p>我们以为已经走远，其实仍在回应很久以前发出的光。</p></article>
+        <article class="card reveal"><div class="card-no">06 / GRAVITY · AMBER</div><canvas class="visual" data-effect="lensAmber" aria-hidden="true"></canvas><h3>恒星余晖</h3><p>愿每一次结束都留下一点亮，照着下一段尚未命名的路。</p></article>
       </div>
     </section>
 
@@ -269,14 +269,14 @@
     function fxGlow(c,x,y,r,color,a=1){const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,rgba(color,.72*a));g.addColorStop(.35,rgba(color,.2*a));g.addColorStop(1,rgba(color,0));c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,TAU);c.fill()}
     function point(cx,cy,r,a){return [cx+Math.cos(a)*r,cy+Math.sin(a)*r]}
     function drawPortal(c,w,h,t,mx,my,p,colors,phase){fxClear(c,w,h,.18);const x=w*.5+(mx-.5)*20,y=h*.37+(my-.5)*16,R=Math.min(w,h)*.28;fxGlow(c,x,y,R*1.35,colors[2],.32+p*.08);for(let i=0;i<18;i++){const r=R*(.3+i*.041)+Math.sin(t*1.4+i+phase)*3,a=t*(i%2?.22:-.18)+i*.7+phase;c.beginPath();c.arc(x+(i%3-1)*2,y,r,a,a+Math.PI*(.65+seeded(i)*.75));c.strokeStyle=rgba(colors[i%3],.28+i*.025);c.lineWidth=1+(i%4)*.42;c.shadowBlur=12;c.shadowColor=colors[(i+1)%3];c.stroke()}c.shadowBlur=0;c.fillStyle='#07070b';c.beginPath();c.arc(x,y,R*.25,0,TAU);c.fill();fxGlow(c,x,y,R*.28,colors[0],.22)}
-    function drawHeartbeat(c,w,h,t,mx,my,p,index){fxClear(c,w,h,.1);const cycle=t*.38%6,travel=cycle<=3?cycle:6-cycle,local=travel-index,active=local>-.15&&local<1.15,gauss=(x,s)=>Math.exp(-(x*x)/(s*s));c.save();c.globalCompositeOperation='lighter';for(let k=0;k<22;k++){c.beginPath();for(let i=0;i<=120;i++){const u=i/120,x=w*(.055+u*.89),d=u-local,ecg=active?(8*gauss(d+.12,.05)-20*gauss(d+.045,.02)+58*gauss(d,.014)-27*gauss(d-.027,.019)+12*gauss(d-.13,.065)):0,base=Math.sin(u*TAU*(1.18+k*.015)+t*(.34+k*.008)+k*.31)*(9+k*.42+p*8),y=h*.36+base+ecg*(1-k*.021)+(my-.5)*18;i?c.lineTo(x,y):c.moveTo(x,y)}c.strokeStyle=rgba(k%5===0?'#ffffff':k%3===0?'#9274ff':'#7bb8ff',.042+k*.007+(active?gauss(local-.5,.42)*.014:0));c.lineWidth=.3+k*.014;c.shadowBlur=active?8:4;c.shadowColor='#7bb8ff';c.stroke()}c.restore();if(active){const x=w*(.055+local*.89),pulse=gauss(local-.5,.62);fxGlow(c,x,h*.36,44+p*14,'#7bb8ff',.34*pulse);c.strokeStyle=rgba('#ffffff',.42*pulse);c.lineWidth=.7;c.beginPath();c.moveTo(x,h*.25);c.lineTo(x,h*.48);c.stroke()}}
+    function drawLens(c,w,h,t,mx,my,p,colors,phase){fxClear(c,w,h,.16);const x=w*.5+(mx-.5)*22,y=h*.36+(my-.5)*17,R=Math.min(w,h)*.215;for(let i=0;i<78;i++){const sx=seeded(i+phase*17)*w,sy=seeded(i+97+phase*11)*h*.7,dx=sx-x,dy=sy-y,d=Math.hypot(dx,dy),bend=R*R/(d*d+700),px=sx+dx*bend*.22,py=sy+dy*bend*.22;c.fillStyle=rgba(i%7?'#ffffff':colors[0],clamp(.12+bend,.1,.62));c.fillRect(px,py,1+bend,1+bend)}const halo=c.createRadialGradient(x,y,R*.3,x,y,R*1.55);halo.addColorStop(0,'rgba(0,0,0,1)');halo.addColorStop(.45,'rgba(0,0,0,.99)');halo.addColorStop(.54,rgba(colors[1],.5+p*.14));halo.addColorStop(.62,rgba(colors[0],.28));halo.addColorStop(.76,rgba(colors[2],.08));halo.addColorStop(1,rgba(colors[2],0));c.fillStyle=halo;c.beginPath();c.arc(x,y,R*1.58,0,TAU);c.fill();c.save();c.translate(x,y);c.rotate(t*.1+phase);for(let j=0;j<7;j++){c.beginPath();c.ellipse(0,0,R*(1.01+j*.075),R*(.22+j*.014),-.3+j*.038,0,TAU);c.strokeStyle=rgba(colors[j%3],.17+j*.035);c.lineWidth=.75+j*.06;c.shadowBlur=10;c.shadowColor=colors[j%3];c.stroke()}c.restore();c.shadowBlur=0;fxGlow(c,x-R*.3,y-R*.35,R*.52,colors[0],.1)}
     const visualDraw={
       portalCyan(c,w,h,t,mx,my,p){drawPortal(c,w,h,t,mx,my,p,['#62f5df','#67a8ff','#9274ff'],0)},
       portalPink(c,w,h,t,mx,my,p){drawPortal(c,w,h,t,mx,my,p,['#ff7ac8','#ff3f8f','#9c56ff'],.7)},
       portalAmber(c,w,h,t,mx,my,p){drawPortal(c,w,h,t,mx,my,p,['#ffe070','#ff9c42','#ff5f57'],1.4)},
-      heart0(c,w,h,t,mx,my,p){drawHeartbeat(c,w,h,t,mx,my,p,0)},
-      heart1(c,w,h,t,mx,my,p){drawHeartbeat(c,w,h,t,mx,my,p,1)},
-      heart2(c,w,h,t,mx,my,p){drawHeartbeat(c,w,h,t,mx,my,p,2)}
+      lensCyan(c,w,h,t,mx,my,p){drawLens(c,w,h,t,mx,my,p,['#62f5df','#67a8ff','#9274ff'],0)},
+      lensViolet(c,w,h,t,mx,my,p){drawLens(c,w,h,t,mx,my,p,['#b69cff','#744cff','#ff73c6'],.75)},
+      lensAmber(c,w,h,t,mx,my,p){drawLens(c,w,h,t,mx,my,p,['#ffe070','#ff9c42','#ff5f57'],1.5)}
     };
     class CardVisual{
       constructor(canvas){this.canvas=canvas;this.c=canvas.getContext('2d');this.draw=visualDraw[canvas.dataset.effect];this.card=canvas.closest('.card');this.mx=this.my=this.tx=this.ty=.5;this.power=0;this.visible=false;this.resize();new ResizeObserver(()=>this.resize()).observe(this.card);this.card.addEventListener('pointermove',e=>{const r=this.card.getBoundingClientRect();this.tx=(e.clientX-r.left)/r.width;this.ty=(e.clientY-r.top)/r.height});this.card.addEventListener('pointerleave',()=>{this.tx=this.ty=.5})}
