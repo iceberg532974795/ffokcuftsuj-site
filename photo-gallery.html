@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050505">
+  <title>摄影集 · FFOKCUFTSUJ</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: dark; --ease: cubic-bezier(.22,.75,.18,1); }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #050505; }
+    body { color: #fff; font-family: Inter, "PingFang SC", "Microsoft YaHei", sans-serif; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    .gallery { position: fixed; inset: 0; isolation: isolate; background: #050505; }
+    .slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity 1s var(--ease), visibility 1s; }
+    .slide.is-active { opacity: 1; visibility: visible; }
+    .wash, .photo { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .wash { object-fit: cover; filter: blur(44px) saturate(.78) brightness(.35); transform: scale(1.12); opacity: .78; }
+    .photo { object-fit: contain; filter: saturate(.96) contrast(1.02); transform: scale(1.018); transition: transform 8s linear; }
+    .slide.is-active .photo { transform: scale(1); }
+    .shade { position: absolute; z-index: 2; inset: 0; pointer-events: none; background: linear-gradient(180deg,rgba(0,0,0,.34),transparent 20%,transparent 75%,rgba(0,0,0,.54)); }
+    .grain { position: absolute; z-index: 3; inset: 0; opacity: .11; pointer-events: none; mix-blend-mode: soft-light; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E"); }
+
+    .back { position: fixed; z-index: 20; top: max(24px,env(safe-area-inset-top)); left: max(24px,env(safe-area-inset-left)); display: inline-flex; align-items: center; gap: 10px; color: rgba(255,255,255,.78); text-decoration: none; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; transition: color .25s; }
+    .back::before { content: "←"; font-size: 18px; line-height: 1; }
+    .back:hover, .back:focus-visible { color: #fff; }
+
+    .nav-zone { position: fixed; z-index: 10; top: 0; bottom: 0; width: 24vw; min-width: 110px; border: 0; padding: 0; color: #fff; background: transparent; cursor: pointer; }
+    .nav-zone.prev { left: 0; }
+    .nav-zone.next { right: 0; }
+    .arrow { position: absolute; top: 50%; display: grid; place-items: center; width: 58px; height: 58px; border: 1px solid rgba(255,255,255,.34); border-radius: 50%; background: rgba(0,0,0,.2); backdrop-filter: blur(12px); opacity: 0; transition: opacity .3s, transform .4s var(--ease), background .3s; }
+    .prev .arrow { left: max(24px,4vw); transform: translate(-12px,-50%); }
+    .next .arrow { right: max(24px,4vw); transform: translate(12px,-50%); }
+    .arrow::before { content: ""; width: 9px; height: 9px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; }
+    .prev .arrow::before { transform: rotate(-135deg); margin-left: 4px; }
+    .next .arrow::before { transform: rotate(45deg); margin-right: 4px; }
+    .nav-zone:hover .arrow, .nav-zone:focus-visible .arrow { opacity: 1; transform: translate(0,-50%); background: rgba(0,0,0,.42); }
+    .nav-zone:focus-visible { outline: none; }
+
+    .meta { position: fixed; z-index: 12; left: max(24px,env(safe-area-inset-left)); right: max(24px,env(safe-area-inset-right)); bottom: max(22px,env(safe-area-inset-bottom)); display: flex; align-items: flex-end; justify-content: space-between; pointer-events: none; text-shadow: 0 2px 18px #000; }
+    .eyebrow { margin-bottom: 8px; color: rgba(255,255,255,.58); font: 600 10px/1 ui-monospace,SFMono-Regular,monospace; letter-spacing: .22em; }
+    h1 { margin: 0; font-size: clamp(20px,2.2vw,34px); font-weight: 500; letter-spacing: .06em; }
+    .counter { font: 500 12px/1 ui-monospace,SFMono-Regular,monospace; letter-spacing: .18em; }
+    .counter .current { font-size: 22px; color: #fff; }
+    .counter .total { color: rgba(255,255,255,.5); }
+    .progress { position: fixed; z-index: 12; left: 0; bottom: 0; width: 100%; height: 2px; background: rgba(255,255,255,.14); }
+    .progress span { display: block; width: 0; height: 100%; background: rgba(255,255,255,.82); }
+    .progress.is-playing span { animation: run 8s linear forwards; }
+    @keyframes run { to { width: 100%; } }
+
+    @media (hover:none) {
+      .nav-zone { width: 30vw; min-width: 88px; }
+      .arrow { width: 46px; height: 46px; opacity: .72; }
+      .prev .arrow { left: 16px; transform: translate(0,-50%); }
+      .next .arrow { right: 16px; transform: translate(0,-50%); }
+    }
+    @media (max-width: 700px) {
+      .wash { filter: blur(28px) saturate(.75) brightness(.32); }
+      .back { top: max(18px,env(safe-area-inset-top)); left: 18px; }
+      .meta { left: 18px; right: 18px; bottom: max(18px,env(safe-area-inset-bottom)); }
+      .eyebrow { margin-bottom: 6px; }
+      h1 { font-size: 18px; }
+      .counter .current { font-size: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .slide, .photo, .arrow { transition-duration: .01ms !important; }
+      .progress span { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="gallery" aria-label="摄影集">
+    <div id="slides"></div>
+    <div class="shade" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <a class="back" href="index.html#explore">返回主页</a>
+    <button class="nav-zone prev" type="button" aria-label="上一张"><span class="arrow" aria-hidden="true"></span></button>
+    <button class="nav-zone next" type="button" aria-label="下一张"><span class="arrow" aria-hidden="true"></span></button>
+
+    <div class="meta">
+      <div><div class="eyebrow">03 / PHOTOGRAPHY</div></div>
+      <div class="counter" aria-live="polite"><span class="current">01</span> <span class="total">/ 12</span></div>
+    </div>
+    <div class="progress" aria-hidden="true"><span></span></div>
+  </main>
+
+  <script>
+    const photos = Array.from({ length: 12 }, (_, i) => `assets/gallery/photo-${String(i + 1).padStart(2, "0")}.jpg`);
+    const slidesRoot = document.querySelector("#slides");
+    const counter = document.querySelector(".current");
+    const progress = document.querySelector(".progress");
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let active = 0;
+    let timer;
+
+    photos.forEach((src, index) => {
+      const slide = document.createElement("figure");
+      slide.className = `slide${index === 0 ? " is-active" : ""}`;
+      slide.setAttribute("aria-hidden", index === 0 ? "false" : "true");
+      const priority = index ? "loading=\"lazy\"" : "fetchpriority=\"high\"";
+      slide.innerHTML = `<img class="wash" src="${src}" alt="" aria-hidden="true" ${priority}><img class="photo" src="${src}" alt="摄影作品 ${index + 1}" ${priority}>`;
+      slidesRoot.append(slide);
+    });
+
+    const slides = [...document.querySelectorAll(".slide")];
+
+    function restartProgress() {
+      clearTimeout(timer);
+      progress.classList.remove("is-playing");
+      void progress.offsetWidth;
+      if (!reducedMotion) progress.classList.add("is-playing");
+      timer = setTimeout(() => show(active + 1), 8000);
+    }
+
+    function show(next) {
+      slides[active].classList.remove("is-active");
+      slides[active].setAttribute("aria-hidden", "true");
+      active = (next + photos.length) % photos.length;
+      slides[active].classList.add("is-active");
+      slides[active].setAttribute("aria-hidden", "false");
+      counter.textContent = String(active + 1).padStart(2, "0");
+      restartProgress();
+    }
+
+    document.querySelector(".prev").addEventListener("click", () => show(active - 1));
+    document.querySelector(".next").addEventListener("click", () => show(active + 1));
+    document.addEventListener("keydown", event => {
+      if (event.key === "ArrowLeft") show(active - 1);
+      if (event.key === "ArrowRight" || event.key === " ") { event.preventDefault(); show(active + 1); }
+      if (event.key === "Escape") location.href = "index.html#explore";
+    });
+
+    let touchX = 0;
+    document.addEventListener("touchstart", event => { touchX = event.changedTouches[0].clientX; }, { passive: true });
+    document.addEventListener("touchend", event => {
+      const delta = event.changedTouches[0].clientX - touchX;
+      if (Math.abs(delta) > 48) show(active + (delta < 0 ? 1 : -1));
+    }, { passive: true });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) clearTimeout(timer); else restartProgress();
+    });
+    restartProgress();
+  </script>
+</body>
+</html>
